@@ -1,0 +1,72 @@
+####################
+#Project name: Data Tidying
+#Author: Xiaoming
+#Date: 09262023
+#Modifying date: 
+#########################
+
+library(tidyverse)
+library(haven)
+library(here)
+library(dplyr)
+
+lwh_fup2 <- read_dta(here("R", "data", "LWH_FUP2.dta"))
+
+n_distinct(lwh_fup2$ID_05)
+
+
+library(dplyr)
+#Explore dataset----
+
+
+#The unit of observation is household and by plot
+#The data have a unique ID in ID_05 which is household_ID
+#Yes there are two units of observation in this dataset
+
+
+#Remove duplicates----
+lwh_fup2 %>%
+  filter(duplicated(ID_05)) %>%
+  print()
+
+ID_3209 <- lwh_fup2 %>% 
+  filter(ID_05 == 3209) %>% 
+  distinct(ID_05)
+
+lwh_fup2_ndup <- lwh_fup2 %>% 
+  filter(ID_05 != 3209) %>% 
+  bind_rows(ID_3209)
+  
+ID_3004 <- lwh_fup2 %>% 
+  filter(ID_05 == 3004) %>% 
+  mutate(ID_05 = ifelse(ID_06 == 12, 3003, 3004))
+
+lwh_fup2_ndup <- lwh_fup2_ndup %>% 
+  filter(ID_05 != 3004) %>% 
+  bind_rows(ID_3004)
+
+n_distinct(lwh_fup2_ndup)
+
+#Create tidy datasets----
+
+lwh_fup2_household <- lwh_fup2_ndup %>% 
+  select(-plant_crop_plot1, -plant_crop_plot2, -CROP_1, -CROP_2, -starts_with("CRP"))
+
+lwh_fup2_plot <- lwh_fup2_ndup %>% 
+  select(starts_with("ID"),
+         plant_crop_plot1, plant_crop_plot2, 
+         CROP_1, CROP_2, starts_with("CRP"))
+
+
+
+lwh_fup2_plot_long <- lwh_fup2_plot %>%
+  rename(plot_1 = plant_crop_plot1,
+         plot_2 = plant_crop_plot2) %>% 
+  pivot_longer(
+    cols = -c(starts_with("ID")), # Specify the columns to keep as-is
+    names_to = c(".value", "plot_number"), # Split column names into .value (question) and plot_number
+    names_sep = "_"
+  )
+
+
+
