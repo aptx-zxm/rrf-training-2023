@@ -1,0 +1,26 @@
+{
+    "id": "BF8B3EDF",
+    "path": "C:/Users/wb614406/github/rrf-training-2023/DataWork/scripts/Template-R-01-tidying-secondary.R",
+    "project_path": "DataWork/scripts/Template-R-01-tidying-secondary.R",
+    "type": "r_source",
+    "hash": "3673941594",
+    "contents": "",
+    "dirty": false,
+    "created": 1695676234126.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "16,23",
+        "scrollLine": "11"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1695676466,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1695676466408,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -14,7 +14,7 @@ pacman::p_load(packages,
 
 # Set folder path to where you downloaded the data
 tidy_folder <- 
-  "YOUR/FOLDER/PATH"
+  here("DataWork", "data")
 
 # Exercise 1 ---------------------------------------
 
