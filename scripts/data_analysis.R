@@ -1,0 +1,159 @@
+library(tidyverse)
+library(haven)
+library(here)
+library(dplyr)
+# install.packages("datasummary")
+# install.packages("huxtable")
+library(modelsummary)
+library(huxtable)
+
+
+analysis <- read_stata(here("data", "LWH_FUP2_analysis.dta"))
+
+analysis <- forcats::as_factor(analysis)
+
+
+packages <- c("here",
+              "haven",
+              "modelsummary",
+              "huxtable",
+              "dplyr",
+              "ggplot2")
+
+pacman :: p_load(packages,
+                 character.only = TRUE,
+                 install = TRUE)
+
+
+#Creating summary tables----
+
+summary <- analysis %>% 
+  select(starts_with("INC")) %>% 
+  datasummary(
+    formula = All(.) ~ Mean +Median + SD + Min + Max,
+    output = "huxtable"
+  )
+
+quick_xlsx(
+  summary,
+  file = here(
+    "outputs",
+    "descriptives.xlsx"
+  )
+)
+
+
+
+
+
+
+
+#Creating balance tables----
+
+#Need seed number to make sure the randomization is not changing
+
+#Need this chunk to select the columns starting with "INC"
+analysis_rct <-
+  analysis %>%
+  mutate(
+    treatment = ifelse(livestock %in% "Yes", 1, 0)
+  ) %>%
+  select(
+    starts_with("INC"), treatment, livestock
+  )
+
+datasummary_balance(
+  ~ livestock,
+  data = analysis_rct
+)
+
+#balance table 2 ----
+
+analysis %>% 
+  datasummary_balance(
+    formula = ~ livestock,
+    output = "huxtable"
+  ) %>% 
+  quick_xlsx(
+    file = here(
+      "outputs",
+      "balance.xlsx"
+    )
+  )
+
+
+
+
+
+
+
+#Regression tables----
+
+regression_analysis <- analysis %>% 
+  mutate(
+    drybean = ifelse(drybean %in% c("Yes"), 1, 0),
+    livestock = ifelse(livestock %in% c("Yes"), 1, 0)
+    ) 
+
+model.1 <- lm(CRP10A ~ drybean, data = regression_analysis)
+  
+model.2 <- lm(CRP10A ~ drybean + livestock, data = regression_analysis)
+
+
+model1_2 <- huxreg(
+  model.1, model.2,
+  coefs = c(
+    "Dry Bean" = "drybean",
+    "Live stock" = "livestock"
+  ),
+  statistics = c("N.obs" = "nobs")) %>% 
+  add_rows(
+    c("Region FE", "No", "No"),
+    after = 7
+  )
+
+# install.packages("openxlsx")
+library(openxlsx)
+
+quick_latex(
+  model1_2,
+  file = here(
+    "outputs",
+    "regression.tex"
+  )
+)
+
+
+#Graphics----
+
+library(ggplot2)
+
+plot1 <- ggplot(analysis) +
+  aes(x = ID_10,
+      y = CRP10A)+
+  geom_col() +
+  labs(title = "Household earnings across study sites") 
+ 
+ggsave(here("outputs", "barchart.png"),
+       plot = plot1,
+       width = 20,
+       height = 10,
+       units = "cm")
+
+
+
+#Scatterplot----
+
+ggplot(analysis) +
+  aes(
+    x = INC_12_w,
+    y = INC_12
+  ) +
+  geom_point() +
+  geom_smooth()
+
+
+
+
+
+

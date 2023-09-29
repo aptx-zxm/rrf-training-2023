@@ -1,0 +1,26 @@
+{
+    "id": "440D4F82",
+    "path": "C:/Users/wb614406/github/rrf-training-2023/scripts/data_construction.R",
+    "project_path": "scripts/data_construction.R",
+    "type": "r_source",
+    "hash": "1631946882",
+    "contents": "",
+    "dirty": false,
+    "created": 1695994780701.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "112,0",
+        "scrollLine": "112"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1695996570,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1695996570483,
+    "read_only": false,
+    "read_only_alternatives": []
+}
